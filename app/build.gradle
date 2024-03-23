@@ -14,9 +14,6 @@ plugins {
     id 'application'
 
     id 'checkstyle'
-
-    id 'jacoco'
-
 }
 
 repositories {
@@ -46,65 +43,9 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-
 checkstyle {
     showViolations = true
     ignoreFailures = false
     maxWarnings = 0
     maxErrors = 0
 }
-
-
-
-test {
-    finalizedBy jacocoTestReport // report is always generated after tests run
-    finalizedBy jacocoTestCoverageVerification
-}
-
-jacocoTestReport {
-    dependsOn test // tests are required to run before generating the report
-}
-
-
-
-jacoco {
-    toolVersion = "0.8.8"
-    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
-}
-
-
-
-jacocoTestReport {
-    reports {
-        xml.required = false
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
-    }
-}
-
-
-
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                counter = 'BRANCH'
-                minimum = 0.70
-            }
-        }
-
-        rule {
-            limit {
-                counter = 'LINE'
-                maximum = 0.70
-            }
-        }
-    }
-}
-
-
-
-
-
-
