@@ -12,11 +12,10 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
-<<<<<<< HEAD
-=======
+
 
     id 'checkstyle'
->>>>>>> origin/master
+
 }
 
 repositories {
@@ -45,8 +44,7 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
-<<<<<<< HEAD
-=======
+
 
 checkstyle {
     showViolations = true
@@ -54,4 +52,3 @@ checkstyle {
     maxWarnings = 0
     maxErrors = 0
 }
->>>>>>> origin/master
