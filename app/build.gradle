@@ -36,6 +36,14 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
+
+
+    implementation'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testCompileOnly 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
 }
 
 application {
@@ -84,14 +92,14 @@ jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = 'BRANCH'
-                minimum = 0.50
+                minimum = 0.60
             }
         }
 
         rule {
             limit {
                 counter = 'LINE'
-                maximum = 1.00
+                maximum = 0.60
             }
         }
     }
