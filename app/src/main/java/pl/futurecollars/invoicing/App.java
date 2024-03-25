@@ -4,37 +4,76 @@
 
 package pl.futurecollars.invoicing;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.List;
-import pl.futurecollars.invoicing.db.Database;
-import pl.futurecollars.invoicing.db.memory.InMemoryDatabase;
 import pl.futurecollars.invoicing.model.Company;
 import pl.futurecollars.invoicing.model.Invoice;
 import pl.futurecollars.invoicing.model.InvoiceEntry;
 import pl.futurecollars.invoicing.model.Vat;
-import pl.futurecollars.invoicing.service.InvoiceService;
+
 
 public class App {
 
   public static void main(String[] args) {
-    Database db = new InMemoryDatabase();
-    InvoiceService service = new InvoiceService(db);
-
     Company buyer = new Company("5213861303", "ul. Bukowińska 24d/7 02-703 Warszawa, Polska", "iCode Trust Sp. z o.o");
     Company seller = new Company("552-168-66-00", "32-005 Niepolomice, Nagietkowa 19", "Piotr Kolacz Development");
 
-    List<InvoiceEntry> products = List.of(new InvoiceEntry("Programming course", BigDecimal.valueOf(10000), BigDecimal.valueOf(2300), Vat.VAT_23));
+    List<InvoiceEntry> products = new LinkedList<>();
+
+    products.add(new InvoiceEntry("Programming course", BigDecimal.valueOf(10000), BigDecimal.valueOf(2300), Vat.VAT_23));
+    products.add(new InvoiceEntry("Programming course", BigDecimal.valueOf(10000), BigDecimal.valueOf(2300), Vat.VAT_23));
 
     Invoice invoice = new Invoice(LocalDate.now(), buyer, seller, products);
 
-    int id = service.save(invoice);
 
-    service.getById(id).ifPresent(System.out::println);
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.registerModule(new JavaTimeModule());
+      objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+      objectMapper.writeValue(new File("invoice.json"), invoice);
 
-    System.out.println(service.getAll());
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
 
-    service.delete(id);
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.registerModule(new JavaTimeModule());
+      Invoice invoiceFromFile = objectMapper.readValue(new File("invoice.json"), Invoice.class);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+
+    try {
+      ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+      objectMapper.findAndRegisterModules();
+      objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+      objectMapper.writeValue(new File("invoice.yaml"), invoice);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    try {
+      ObjectMapper objectMapper = new ObjectMapper((new YAMLFactory()));
+      objectMapper.findAndRegisterModules();
+      objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+      Invoice invoiceFromYaml = objectMapper.readValue(new File("invoice.yaml"), Invoice.class);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+
   }
 }
 
