@@ -16,5 +16,4 @@ public interface Database {
 
   void delete(int id);
 
-
 }

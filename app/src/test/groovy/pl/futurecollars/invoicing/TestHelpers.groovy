@@ -12,7 +12,7 @@ class TestHelpers {
     static company(int id) {
         new Company(("$id").repeat(10),
                 "ul. Bukowińska 24d/$id 02-703 Warszawa, Polska",
-                "iCode Trust $id Sp. z o.o");
+                "iCode Trust $id Sp. z o.o")
     }
 
     static product(int id) {
@@ -22,4 +22,19 @@ class TestHelpers {
     static invoice(int id) {
         new Invoice(LocalDate.now(), company(id), company(id), List.of(product(id)))
     }
+
+    static company2(int id) {
+        new Company(("$id").repeat(10),
+                "ul. Bukowińska 24d/$id 02-703 Warszawa, Polska",
+                "iCode Trust $id Sp. z o.o")
+    }
+
+    static product2(int id) {
+        new InvoiceEntry("Kurs programowania $id", BigDecimal.valueOf(id * 1000), BigDecimal.valueOf(id * 1000 * 0.08), Vat.VAT_8)
+    }
+
+    static invoiceSecond(int id) {
+        new Invoice(LocalDate.now(), company2(id), company2(id), List.of(product2(id)))
+    }
+
 }

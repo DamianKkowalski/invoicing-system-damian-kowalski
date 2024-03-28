@@ -13,7 +13,6 @@ public class IdService {
 
   private int id;
 
-
   public IdService(FileService filesService, Path path) {
     this.filesService = filesService;
     this.path = path;
@@ -22,14 +21,14 @@ public class IdService {
 
   public int getNextIdAndIncrement() {
     try {
-      filesService.writeToFile(path, String.valueOf(id + 1));
+      filesService.writeToFile(path, String.valueOf(id));
       return id++;
     } catch (IOException e) {
       throw new RuntimeException("Problem z generwoaniem ID", e);
     }
   }
 
-  private int readNextIdFromFile() {
+  public int readNextIdFromFile() {
     try {
       if (!Files.exists(path)) {
         Files.createFile(path);
@@ -41,6 +40,5 @@ public class IdService {
       throw new RuntimeException("Znaleziono blad z plikiem przechowujacym aktualne ID", e);
     }
   }
-
 
 }

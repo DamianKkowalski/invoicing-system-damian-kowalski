@@ -10,9 +10,9 @@ import pl.futurecollars.invoicing.model.Invoice;
 
 public class InMemoryDatabase implements Database {
 
-  private final Map<Integer, Invoice> invoices = new HashMap<>();
-
   public int nexId = 1;
+
+  private final Map<Integer, Invoice> invoices = new HashMap<>();
 
   @Override
   public int save(Invoice invoice) {

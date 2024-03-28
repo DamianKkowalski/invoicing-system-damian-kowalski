@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 // TODO: Doczytac o throws
+
 public class FileService {
 
   public void appendLineToFile(Path path, String line) throws IOException {

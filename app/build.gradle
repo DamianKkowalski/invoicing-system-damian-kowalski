@@ -27,6 +27,10 @@ repositories {
 }
 
 dependencies {
+    dependencies {
+        testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+        testImplementation 'net.bytebuddy:byte-buddy:1.11.14'
+    }
     // Use the latest Groovy version for Spock testing
     testImplementation 'org.codehaus.groovy:groovy:3.0.13'
 

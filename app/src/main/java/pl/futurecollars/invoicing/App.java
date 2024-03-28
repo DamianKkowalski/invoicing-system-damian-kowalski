@@ -20,7 +20,6 @@ import pl.futurecollars.invoicing.model.Invoice;
 import pl.futurecollars.invoicing.model.InvoiceEntry;
 import pl.futurecollars.invoicing.model.Vat;
 
-
 public class App {
 
   public static void main(String[] args) {
@@ -33,7 +32,6 @@ public class App {
     products.add(new InvoiceEntry("Programming course", BigDecimal.valueOf(10000), BigDecimal.valueOf(2300), Vat.VAT_23));
 
     Invoice invoice = new Invoice(LocalDate.now(), buyer, seller, products);
-
 
     try {
       ObjectMapper objectMapper = new ObjectMapper();
@@ -55,7 +53,6 @@ public class App {
       throw new RuntimeException(e);
     }
 
-
     try {
       ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
       objectMapper.findAndRegisterModules();
@@ -65,7 +62,7 @@ public class App {
       throw new RuntimeException(e);
     }
     try {
-      ObjectMapper objectMapper = new ObjectMapper((new YAMLFactory()));
+      ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
       objectMapper.findAndRegisterModules();
       objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
       Invoice invoiceFromYaml = objectMapper.readValue(new File("invoice.yaml"), Invoice.class);
@@ -73,9 +70,5 @@ public class App {
       throw new RuntimeException(e);
     }
 
-
   }
 }
-
-
-
