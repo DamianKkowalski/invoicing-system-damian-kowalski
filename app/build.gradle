@@ -13,8 +13,11 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
 
-
     id 'checkstyle'
+
+
+    id 'jacoco'
+
 
 }
 
@@ -33,6 +36,14 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
+
+
+    implementation'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testCompileOnly 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
 }
 
 application {
@@ -45,10 +56,52 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-
 checkstyle {
     showViolations = true
     ignoreFailures = false
     maxWarnings = 0
     maxErrors = 0
 }
+
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+    finalizedBy jacocoTestCoverageVerification
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.60
+            }
+        }
+
+        rule {
+            limit {
+                counter = 'LINE'
+                maximum = 1.00
+            }
+        }
+    }
+}
+
