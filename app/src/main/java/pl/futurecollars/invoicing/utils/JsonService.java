@@ -11,7 +11,7 @@ public class JsonService {
       new ObjectMapper().registerModule(new JavaTimeModule())
           .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-  // TODO to sie przyda przy Getach, metoda toObject bedzie najbardziej przydatna.
+
   public String toJson(Object object) {
     try {
       return objectMapper.writeValueAsString(object);
@@ -28,3 +28,5 @@ public class JsonService {
     }
   }
 }
+
+//TODO sprawdzic bledne piki

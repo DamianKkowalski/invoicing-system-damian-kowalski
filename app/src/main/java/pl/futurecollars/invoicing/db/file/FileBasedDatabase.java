@@ -86,6 +86,7 @@ public class FileBasedDatabase implements Database {
     }
 
   }
+  // TODO, fileservie, jeson service wyjatki,
 
   @Override
   public void delete(int id) {
