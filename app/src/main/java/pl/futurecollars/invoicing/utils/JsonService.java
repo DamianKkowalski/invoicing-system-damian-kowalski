@@ -7,7 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JsonService {
 
-  private static final ObjectMapper objectMapper =
+
+  private  final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new JavaTimeModule())
           .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
@@ -28,5 +29,3 @@ public class JsonService {
     }
   }
 }
-
-//TODO sprawdzic bledne piki

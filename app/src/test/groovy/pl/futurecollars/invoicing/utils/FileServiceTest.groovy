@@ -1,11 +1,14 @@
 package pl.futurecollars.invoicing.utils
 
+
 import spock.lang.Specification
 
 import java.nio.file.Files
 import java.nio.file.Path
 
+
 class FileServiceTest extends Specification {
+
     def "AppendLineToFile should append a line to a file"() {
         given:
 

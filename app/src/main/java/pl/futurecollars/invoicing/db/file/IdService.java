@@ -21,18 +21,19 @@ public class IdService {
 
   public int getNextIdAndIncrement() {
     try {
+      id +=1;
       filesService.writeToFile(path, String.valueOf(id));
-      return id++;
+      return id;
     } catch (IOException e) {
       throw new RuntimeException("Problem z generwoaniem ID", e);
     }
   }
 
-  public int readNextIdFromFile() {
+  private int readNextIdFromFile() {
     try {
       if (!Files.exists(path)) {
         Files.createFile(path);
-        filesService.writeToFile(path, "0");
+        filesService.writeToFile(path, "1");
       }
       List<String> idString = filesService.readAllLines(path);
       return Integer.parseInt(idString.get(0));

@@ -41,66 +41,62 @@ public class FileBasedDatabase implements Database {
   @Override
   public Optional<Invoice> getById(int id) {
     try {
-      List<String> lines = filesService.readAllLines(path);
-      return lines.stream()
-          .map(json -> jsonService.toObject(json, Invoice.class))
-          .filter(invoice -> invoice.getId() == id)
+
+      return filesService.readAllLines(path)
+          .stream()
+          .filter(line -> containsId(line, id))
+          .map(line -> jsonService.toObject(line, Invoice.class))
           .findFirst();
     } catch (IOException e) {
       throw new RuntimeException("Blad z odnalezieniem faktury po ID", e);
     }
   }
-  // TODO wypisywanie Invoice po ID
 
   @Override
   public List<Invoice> getAll() {
     try {
-      List<String> lines = filesService.readAllLines(path);
-      return lines.stream()
-          .map(json -> jsonService.toObject(json, Invoice.class))
-          .peek(System.out::println)
+      return filesService.readAllLines(path)
+          .stream()
+          .map(line -> jsonService.toObject(line, Invoice.class))
           .collect(Collectors.toList());
     } catch (IOException e) {
       throw new RuntimeException("Problem z odczytaniem wszystkich rekordow z Invoice", e);
     }
   }
-  // TODO wypisaywanie listy dokonczyc
 
   @Override
   public void update(int id, Invoice updatedInvoice) {
     try {
-      List<String> updatedLines = filesService.readAllLines(path)
+      List<String> updatedLines = filesService.readAllLines(path);
+          var filteredLinesWithoutUpdatedId = updatedLines
           .stream()
-          .map(json -> {
-            Invoice invoice = jsonService.toObject(json, Invoice.class);
-            if (invoice.getId() == id) {
-              return jsonService.toJson(updatedInvoice);
-            } else {
-              return json;
-            }
-          })
+          .filter(line -> !containsId(line, id))
           .collect(Collectors.toList());
-      filesService.writeLinesToFile(path, updatedLines);
+          if(updatedLines.size() == filteredLinesWithoutUpdatedId.size())
+            throw new IllegalArgumentException(("Id " + id + " does not exists"));
+      updatedInvoice.setId(id);
+      filteredLinesWithoutUpdatedId.add(jsonService.toJson(updatedInvoice));
+      filesService.writeLinesToFile(path, filteredLinesWithoutUpdatedId);
     } catch (IOException e) {
       throw new RuntimeException("Blad z aktualizacja danych na fakturze", e);
     }
 
   }
-  // TODO, fileservie, jeson service wyjatki,
 
   @Override
   public void delete(int id) {
     try {
       List<String> updatedLines = filesService.readAllLines(path)
           .stream()
-          .filter(json -> {
-            Invoice invoice = jsonService.toObject(json, Invoice.class);
-            return invoice.getId() != id;
-          })
+          .filter(line -> !containsId(line, id))
           .collect(Collectors.toList());
       filesService.writeLinesToFile(path, updatedLines);
     } catch (IOException e) {
       throw new RuntimeException("Problem z usunieciem pliku po ID");
     }
+  }
+
+  private boolean containsId(String line, int id) {
+    return line.contains("\"id\":" + id + ",");
   }
 }

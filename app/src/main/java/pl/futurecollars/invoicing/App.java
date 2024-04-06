@@ -22,7 +22,7 @@ import pl.futurecollars.invoicing.model.Vat;
 
 public class App {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) {/*
     Company buyer = new Company("5213861303", "ul. Bukowińska 24d/7 02-703 Warszawa, Polska", "iCode Trust Sp. z o.o");
     Company seller = new Company("552-168-66-00", "32-005 Niepolomice, Nagietkowa 19", "Piotr Kolacz Development");
 
@@ -65,10 +65,11 @@ public class App {
       ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
       objectMapper.findAndRegisterModules();
       objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       Invoice invoiceFromYaml = objectMapper.readValue(new File("invoice.yaml"), Invoice.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-
+*/
   }
 }
