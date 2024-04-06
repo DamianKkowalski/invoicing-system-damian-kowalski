@@ -1,6 +1,6 @@
 package pl.futurecollars.invoicing.db.file
 
-import com.fasterxml.jackson.core.type.TypeReference
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import pl.futurecollars.invoicing.model.Invoice
@@ -14,7 +14,7 @@ import static pl.futurecollars.invoicing.TestHelpers.invoice
 
 class FileBasedDatabaseSpec extends Specification {
 
-    private List<Invoice> invoices
+    private List<Invoice> invoices = [invoice(0), invoice(1), invoice(2)]
    // private Invoice originalInvoice
     def path = Mock(Path)
     def jsonService = Mock(JsonService)
