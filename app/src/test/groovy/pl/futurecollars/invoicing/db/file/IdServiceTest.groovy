@@ -41,6 +41,7 @@ class IdServiceTest extends Specification {
         then:
         id == 2
         0 * fileService.writeToFile(path, "1")
+        1 * fileService.writeToFile(path, "2")
     }
     def "should throw exception when file error occurs"() {
         given:
