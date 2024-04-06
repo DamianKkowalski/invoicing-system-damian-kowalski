@@ -33,15 +33,17 @@ class IdServiceTest extends Specification {
     }
 
     def "should get next ID and increment it"() {
+        given:
+        def randomPath = Path.of("ExamplePath")
         when:
-        fileService.readAllLines(path) >> Arrays.asList("1")
-        idService = new IdService(fileService, path)
+        fileService.readAllLines(randomPath) >> Arrays.asList("1")
+        idService = new IdService(fileService, randomPath)
         def id = idService.getNextIdAndIncrement()
 
         then:
         id == 2
-        0 * fileService.writeToFile(path, "1")
-        1 * fileService.writeToFile(path, "2")
+        0 * fileService.writeToFile(randomPath, "1")
+        1 * fileService.writeToFile(randomPath, "2")
     }
     def "should throw exception when file error occurs"() {
         given:
