@@ -31,8 +31,8 @@ class FileBasedDatabaseSpec extends Specification {
     def setup() {
         ObjectMapper objectMapper = new ObjectMapper()
         objectMapper.registerModule(new JavaTimeModule())
-        String filePath = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\TestData.json"
-        invoices = objectMapper.readValue(new File(filePath), new TypeReference<List<Invoice>>() {})
+        //String filePath = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\TestData.json"
+        //invoices = objectMapper.readValue(new File(filePath), new TypeReference<List<Invoice>>() {})
         String updatedLine = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\InvoiceUpdate.json"
         originalInvoice = objectMapper.readValue(new File(updatedLine), Invoice.class)
 
