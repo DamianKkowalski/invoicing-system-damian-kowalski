@@ -15,7 +15,7 @@ import static pl.futurecollars.invoicing.TestHelpers.invoice
 class FileBasedDatabaseSpec extends Specification {
 
     private List<Invoice> invoices
-    private Invoice originalInvoice
+   // private Invoice originalInvoice
     def path = Mock(Path)
     def jsonService = Mock(JsonService)
     def fileService = Mock(FileService)
@@ -33,8 +33,8 @@ class FileBasedDatabaseSpec extends Specification {
         objectMapper.registerModule(new JavaTimeModule())
         //String filePath = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\TestData.json"
         //invoices = objectMapper.readValue(new File(filePath), new TypeReference<List<Invoice>>() {})
-        String updatedLine = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\InvoiceUpdate.json"
-        originalInvoice = objectMapper.readValue(new File(updatedLine), Invoice.class)
+      //  String updatedLine = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\InvoiceUpdate.json"
+       // originalInvoice = objectMapper.readValue(new File(updatedLine), Invoice.class)
 
     }
 
