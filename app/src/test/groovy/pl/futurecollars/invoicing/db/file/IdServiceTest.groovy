@@ -16,12 +16,11 @@ class IdServiceTest extends Specification {
     def setup ()
     {
         fileService = Mock(FileService)
-
     }
 
-    def "should get next ID and increment it - rename me"() {
+    def "should read initial id from file"() {
         given:
-        def randomPath = Path.of("lelelelele")
+        def randomPath = Path.of("ExamplePath")
 
         when:
         fileService.readAllLines(randomPath) >> Arrays.asList("1")
@@ -30,7 +29,7 @@ class IdServiceTest extends Specification {
 
         then:
         id == 2
-        1 * fileService.writeToFile(randomPath, "1")
+        1 * fileService.writeToFile(randomPath, "2")
     }
 
     def "should get next ID and increment it"() {
@@ -54,4 +53,5 @@ class IdServiceTest extends Specification {
         then:
         thrown(RuntimeException)
     }
+
 }

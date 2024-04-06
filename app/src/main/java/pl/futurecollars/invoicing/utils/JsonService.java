@@ -7,11 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JsonService {
 
-
-  private  final ObjectMapper objectMapper =
+  private final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new JavaTimeModule())
           .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
 
   public String toJson(Object object) {
     try {

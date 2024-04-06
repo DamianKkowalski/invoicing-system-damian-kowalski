@@ -68,12 +68,13 @@ public class FileBasedDatabase implements Database {
   public void update(int id, Invoice updatedInvoice) {
     try {
       List<String> updatedLines = filesService.readAllLines(path);
-          var filteredLinesWithoutUpdatedId = updatedLines
-          .stream()
-          .filter(line -> !containsId(line, id))
-          .collect(Collectors.toList());
-          if(updatedLines.size() == filteredLinesWithoutUpdatedId.size())
-            throw new IllegalArgumentException(("Id " + id + " does not exists"));
+      var filteredLinesWithoutUpdatedId = updatedLines
+              .stream()
+              .filter(line -> !containsId(line, id))
+              .collect(Collectors.toList());
+      if (updatedLines.size() == filteredLinesWithoutUpdatedId.size()) {
+        throw new IllegalArgumentException("Id " + id + " does not exist");
+      }
       updatedInvoice.setId(id);
       filteredLinesWithoutUpdatedId.add(jsonService.toJson(updatedInvoice));
       filesService.writeLinesToFile(path, filteredLinesWithoutUpdatedId);

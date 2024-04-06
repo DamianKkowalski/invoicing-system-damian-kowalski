@@ -21,7 +21,7 @@ public class IdService {
 
   public int getNextIdAndIncrement() {
     try {
-      id +=1;
+      id += 1;
       filesService.writeToFile(path, String.valueOf(id));
       return id;
     } catch (IOException e) {
