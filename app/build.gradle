@@ -27,6 +27,13 @@ repositories {
 }
 
 dependencies {
+
+        testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+        testImplementation 'net.bytebuddy:byte-buddy:1.11.14'
+
+
+    testImplementation 'org.objenesis:objenesis:3.2'
+
     // Use the latest Groovy version for Spock testing
     testImplementation 'org.codehaus.groovy:groovy:3.0.13'
 
@@ -44,6 +51,12 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.1'
+
 }
 
 application {
@@ -92,14 +105,14 @@ jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = 'BRANCH'
-                minimum = 0.60
+                minimum = 0.80
             }
         }
 
         rule {
             limit {
                 counter = 'LINE'
-                maximum = 1.00
+                minimum = 0.80
             }
         }
     }
