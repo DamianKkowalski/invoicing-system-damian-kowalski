@@ -5,10 +5,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import pl.futurecollars.invoicing.db.Database;
 import pl.futurecollars.invoicing.model.Invoice;
 import pl.futurecollars.invoicing.utils.FileService;
 import pl.futurecollars.invoicing.utils.JsonService;
+
+@AllArgsConstructor
 
 public class FileBasedDatabase implements Database {
 
@@ -65,19 +68,18 @@ public class FileBasedDatabase implements Database {
   }
 
   @Override
-  public void update(int id, Invoice updatedInvoice) {
+  public Optional<Invoice> update(int id, Invoice updatedInvoice) {
     try {
       List<String> updatedLines = filesService.readAllLines(path);
       var filteredLinesWithoutUpdatedId = updatedLines
               .stream()
               .filter(line -> !containsId(line, id))
               .collect(Collectors.toList());
-      if (updatedLines.size() == filteredLinesWithoutUpdatedId.size()) {
-        throw new IllegalArgumentException("Id " + id + " does not exist");
-      }
       updatedInvoice.setId(id);
       filteredLinesWithoutUpdatedId.add(jsonService.toJson(updatedInvoice));
       filesService.writeLinesToFile(path, filteredLinesWithoutUpdatedId);
+      updatedLines.removeAll(filteredLinesWithoutUpdatedId);
+      return updatedLines.isEmpty() ? Optional.empty() : Optional.of(jsonService.toObject(updatedLines.get(0), Invoice.class));
     } catch (IOException e) {
       throw new RuntimeException("Blad z aktualizacja danych na fakturze", e);
     }
@@ -85,13 +87,16 @@ public class FileBasedDatabase implements Database {
   }
 
   @Override
-  public void delete(int id) {
+  public Optional<Invoice> delete(int id) {
     try {
-      List<String> updatedLines = filesService.readAllLines(path)
+      var updatedLines = filesService.readAllLines(path);
+      var invoicesExceptDeleted = updatedLines
           .stream()
           .filter(line -> !containsId(line, id))
           .collect(Collectors.toList());
-      filesService.writeLinesToFile(path, updatedLines);
+      filesService.writeLinesToFile(path, invoicesExceptDeleted);
+      updatedLines.removeAll(invoicesExceptDeleted);
+      return updatedLines.isEmpty() ? Optional.empty() : Optional.of(jsonService.toObject(updatedLines.get(0), Invoice.class));
     } catch (IOException e) {
       throw new RuntimeException("Problem z usunieciem pliku po ID");
     }
