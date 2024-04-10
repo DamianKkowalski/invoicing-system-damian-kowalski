@@ -1,8 +1,6 @@
 package pl.futurecollars.invoicing.db.file
 
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import pl.futurecollars.invoicing.model.Invoice
 import pl.futurecollars.invoicing.utils.FileService
 import pl.futurecollars.invoicing.utils.JsonService
@@ -29,13 +27,12 @@ class FileBasedDatabaseSpec extends Specification {
 
 
     def setup() {
-        ObjectMapper objectMapper = new ObjectMapper()
-        objectMapper.registerModule(new JavaTimeModule())
-        //String filePath = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\TestData.json"
-        //invoices = objectMapper.readValue(new File(filePath), new TypeReference<List<Invoice>>() {})
-      //  String updatedLine = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\InvoiceUpdate.json"
-       // originalInvoice = objectMapper.readValue(new File(updatedLine), Invoice.class)
-
+    //  ObjectMapper objectMapper = new ObjectMapper()
+    // objectMapper.registerModule(new JavaTimeModule())
+    //String filePath = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\TestData.json"
+    //invoices = objectMapper.readValue(new File(filePath), new TypeReference<List<Invoice>>() {})
+    //  String updatedLine = "src\\test\\groovy\\pl\\futurecollars\\invoicing\\db\\file\\InvoiceUpdate.json"
+    // originalInvoice = objectMapper.readValue(new File(updatedLine), Invoice.class)
     }
 
     def "save should save an invoice to the file and return its ID"() {
@@ -196,6 +193,7 @@ class FileBasedDatabaseSpec extends Specification {
                 "{\"id\":3,\"date\":\"2024-04-03\",\"buyer\":{\"taxIdentifications\":\"5213861303\",\"address\":\"ul. Bukowińska 24d/7 02-703 Warszawa, Polska\",\"name\":\"iCode Trust Sp. z o.o\"},\"seller\":{\"taxIdentifications\":\"552-168-66-00\",\"address\":\"32-005 Niepolomice, Nagietkowa 19\",\"name\":\"Piotr Kolacz Development\"},\"entries\":[{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"},{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"}]}"
         ]
         fileService.readAllLines(path) >> jsonLines
+        jsonService.toObject(jsonLines[1], Invoice.class) >> invoices[1]
         def deletedId = 2
 
         when:
