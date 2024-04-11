@@ -1,7 +1,6 @@
 package pl.futurecollars.invoicing.db.file;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import pl.futurecollars.invoicing.utils.FileService;
@@ -31,8 +30,8 @@ public class IdService {
 
   private int readNextIdFromFile() {
     try {
-      if (!Files.exists(path)) {
-        Files.createFile(path);
+      List<String> lines = filesService.readAllLines(path);
+      if (lines.isEmpty()) {
         filesService.writeToFile(path, "1");
       }
       List<String> idString = filesService.readAllLines(path);
