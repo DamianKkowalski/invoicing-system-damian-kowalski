@@ -32,6 +32,8 @@ repositories {
 
 java {
     toolchain {
+        languageVersion = JavaLanguageVersion.of(14)
+        vendor = JvmVendorSpec.ADOPTOPENJDK
     }
 }
 
