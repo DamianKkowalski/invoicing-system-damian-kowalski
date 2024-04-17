@@ -6,20 +6,35 @@
  * User Manual available at https://docs.gradle.org/8.0/userguide/building_java_projects.html
  */
 
+buildscript {
+    ext {
+        byteBuddyVersion = '1.11.14'
+        groovyVersion = '3.0.13'
+        guavaVersion = '31.1-jre'
+        jacksonDatabindVersion = '2.0.1'
+        jacksonVerision = '2.11.1'
+        junitVersion = '4.13.2'
+        lombokVersion = '1.18.22'
+        objensisVersion = '3.2'
+        spockVersion = '2.0-groovy-3.0'
+        springBootVersion = '2.4.2'
+        springDependencyManagementVersion = '1.0.11.RELEASE'
+    }
+}
+
 plugins {
-    // Apply the groovy plugin to also add support for Groovy (needed for Spock)
+
     id 'groovy'
 
-    // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
 
     id 'checkstyle'
 
-
     id 'jacoco'
 
-    id 'org.springframework.boot' version '2.4.2'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version "${springBootVersion}"
+
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 
     id 'java'
 }
@@ -32,47 +47,47 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(14)
+        languageVersion = JavaLanguageVersion.of(15)
         vendor = JvmVendorSpec.ADOPTOPENJDK
     }
 }
 
 dependencies {
 
-        testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
-        testImplementation 'net.bytebuddy:byte-buddy:1.11.14'
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
+    testImplementation "net.bytebuddy:byte-buddy:${byteBuddyVersion}"
 
 
-    testImplementation 'org.objenesis:objenesis:3.2'
+    testImplementation "org.objenesis:objenesis:${objensisVersion}"
 
-    // Use the latest Groovy version for Spock testing
-    testImplementation 'org.codehaus.groovy:groovy:3.0.13'
+
+    testImplementation "org.codehaus.groovy:groovy:${groovyVersion}"
 
     // Use the awesome Spock testing and specification framework even with Java
-    testImplementation 'org.spockframework:spock-core:2.2-groovy-3.0'
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
+    testImplementation "junit:junit:${junitVersion}"
 
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
 
 
-    implementation'org.projectlombok:lombok:1.18.22'
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-    testCompileOnly 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1'
+    implementation("org.projectlombok:lombok:${lombokVersion}")
+    compileOnly ("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor ("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly ("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor ("org.projectlombok:lombok:${lombokVersion}")
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVerision}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVerision}"
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.1'
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVerision}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVerision}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVerision}"
 
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.spockframework:spock-spring:1.3-groovy-2.5'
+    testImplementation "org.spockframework:spock-spring:${spockVersion}"
 
 }
 
