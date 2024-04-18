@@ -11,6 +11,6 @@
         <module name="invoicing-system-damian-kowalski.app.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="15" />
   </component>
 </project>

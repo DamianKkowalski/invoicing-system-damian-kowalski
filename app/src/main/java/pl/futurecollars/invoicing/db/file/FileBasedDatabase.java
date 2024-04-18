@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import pl.futurecollars.invoicing.db.Database;
 import pl.futurecollars.invoicing.model.Invoice;
 import pl.futurecollars.invoicing.utils.FileService;
@@ -13,6 +14,7 @@ import pl.futurecollars.invoicing.utils.JsonService;
 
 @AllArgsConstructor
 
+@Slf4j
 public class FileBasedDatabase implements Database {
 
   private final FileService filesService;
@@ -37,6 +39,7 @@ public class FileBasedDatabase implements Database {
       filesService.appendLineToFile(path, jsonService.toJson(invoice));
       return invoice.getId();
     } catch (IOException e) {
+      log.info("Problem z zapisaniem danych");
       throw new RuntimeException("Problem z zapisaniem Invoice", e);
     }
   }
@@ -51,6 +54,7 @@ public class FileBasedDatabase implements Database {
           .map(line -> jsonService.toObject(line, Invoice.class))
           .findFirst();
     } catch (IOException e) {
+      log.info("Problem ze znalezieniem danych po id: {}", id);
       throw new RuntimeException("Blad z odnalezieniem faktury po ID", e);
     }
   }
@@ -63,6 +67,7 @@ public class FileBasedDatabase implements Database {
           .map(line -> jsonService.toObject(line, Invoice.class))
           .collect(Collectors.toList());
     } catch (IOException e) {
+      log.info("Problem z odczytaniem danych");
       throw new RuntimeException("Problem z odczytaniem wszystkich rekordow z Invoice", e);
     }
   }
@@ -81,6 +86,7 @@ public class FileBasedDatabase implements Database {
       updatedLines.removeAll(filteredLinesWithoutUpdatedId);
       return updatedLines.isEmpty() ? Optional.empty() : Optional.of(jsonService.toObject(updatedLines.get(0), Invoice.class));
     } catch (IOException e) {
+      log.info("Problem z aktualizacja danych po id: {}", id);
       throw new RuntimeException("Blad z aktualizacja danych na fakturze", e);
     }
 
@@ -98,7 +104,8 @@ public class FileBasedDatabase implements Database {
       updatedLines.removeAll(invoicesExceptDeleted);
       return updatedLines.isEmpty() ? Optional.empty() : Optional.of(jsonService.toObject(updatedLines.get(0), Invoice.class));
     } catch (IOException e) {
-      throw new RuntimeException("Problem z usunieciem pliku po ID");
+      log.info("Problem z usunieciem danych po id: {}", id);
+      throw new RuntimeException("Problem z usunieciem danych po ID");
     }
   }
 
