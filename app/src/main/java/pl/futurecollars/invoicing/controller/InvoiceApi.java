@@ -16,6 +16,7 @@ import pl.futurecollars.invoicing.model.Invoice;
 @RequestMapping("invoices")
 @Api(tags = {"invoice-controller"})
 public interface InvoiceApi {
+
   @ApiOperation(value = "Get list of all invoices")
   @GetMapping(produces = {"application/json;charset=UTF-8"})
   List<Invoice> getAll();
