@@ -8,6 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 @Data
+
 public class TaxCalculatorResult {
   private final BigDecimal income;
   private final BigDecimal costs;
