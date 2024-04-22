@@ -15,4 +15,5 @@ public class TaxCalculatorResult {
   private final BigDecimal incomingVat;
   private final BigDecimal outgoingVat;
   private final BigDecimal vatToReturn;
+
 }
