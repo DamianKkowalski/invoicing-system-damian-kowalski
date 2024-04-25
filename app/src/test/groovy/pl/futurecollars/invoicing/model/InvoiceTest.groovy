@@ -11,7 +11,7 @@ class InvoiceTest extends Specification {
         def invoiceEntry = InvoiceEntry.builder()
                 .description("Laptop")
                 .quantity(1)
-                .price(new BigDecimal("1000.00"))
+                .netPrice(new BigDecimal("1000.00"))
                 .vatValue(new BigDecimal("230.00"))
                 .vatRate(Vat.VAT_23).build()
 

@@ -12,12 +12,12 @@ class InvoiceEntryTest extends Specification {
         def vatRate = Vat.VAT_5
 
         when:
-        def invoiceEntry = new InvoiceEntry(description,quantity,price,vatValue,vatRate)
+        def invoiceEntry = new InvoiceEntry(description,quantity,price,vatValue,vatRate, new Car())
 
         then:
         invoiceEntry.description == description
         invoiceEntry.quantity == quantity
-        invoiceEntry.price == price
+        invoiceEntry.netPrice == price
         invoiceEntry.vatValue == vatValue
         invoiceEntry.vatRate == vatRate
     }
