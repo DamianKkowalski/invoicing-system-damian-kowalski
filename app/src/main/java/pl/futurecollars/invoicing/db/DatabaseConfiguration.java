@@ -28,7 +28,6 @@ public class DatabaseConfiguration {
     return new IdService(fileService, idFilePath);
   }
 
-
   @Bean
   @ConditionalOnProperty(name = "invoicing-system.database", havingValue = "file")
   public Database fileBasedDatabase(IdService idService,
@@ -44,7 +43,6 @@ public class DatabaseConfiguration {
     Path databaseFilePath = Files.createTempFile(databaseDirectory, invoicesFile);
     return new FileBasedDatabase(fileService, jsonService, idService, databaseFilePath);
   }
-
 
   @Bean
   @ConditionalOnProperty(name = "invoicing-system.database", havingValue = "memory")
