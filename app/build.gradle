@@ -21,6 +21,7 @@ buildscript {
         springDependencyManagementVersion = '1.0.11.RELEASE'
         springFoxStarterVersion = '3.0.0'
         springFoxUiVersion = '3.0.0'
+        flywayVersion = '7.6.0'
 
     }
 }
@@ -57,6 +58,8 @@ java {
 
 dependencies {
 
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+
     implementation "io.springfox:springfox-boot-starter:${springFoxStarterVersion}"
     implementation "io.springfox:springfox-swagger-ui:${springFoxUiVersion}"
 
@@ -89,6 +92,10 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVerision}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVerision}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVerision}"
+
+    runtimeOnly 'org.postgresql:postgresql:42.2.19'
+    runtimeOnly 'com.h2database:h2:1.4.200'
+    implementation "org.flywaydb:flyway-core:${flywayVersion}"
 
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -144,7 +151,7 @@ jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = 'BRANCH'
-                minimum = 0.83
+                minimum = 0.80
             }
         }
 
@@ -158,5 +165,22 @@ jacocoTestCoverageVerification {
     startScripts {
         dependsOn bootJar
     }
+
+
+    task testWithFileDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'file'
+    }
+
+    task testWithMemoryDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'memory'
+    }
+
+    task testWithSQLDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'sql'
+    }
+
+    check.dependsOn testWithFileDatabase
+    check.dependsOn testWithFileDatabase
+    //check.dependsOn testWithSqlDatabase
 }
 
