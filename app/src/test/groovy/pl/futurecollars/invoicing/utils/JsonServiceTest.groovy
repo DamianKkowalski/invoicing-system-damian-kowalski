@@ -15,7 +15,7 @@ class JsonServiceTest extends Specification {
         def jsonString = jsonService.toJson(object)
 
         then:
-        jsonString == '{"id":0,"taxIdentifications":"1","address":"ul. Bukowinska 24d/1 02-703 Warszawa, Polska","name":"iCode Trust 1 Sp. z o.o","pensionInsurance":10,"healthInsurance":100}'
+        jsonString == '{"id":0,"taxIdentifications":"1","address":"ul. Bukowinska 24d/1 02-703 Warszawa, Polska","name":"iCode Trust 1 Sp. z o.o","pensionInsurance":10.00,"healthInsurance":100.00}'
     }
 
     def "toObject should convert JSON string to object"() {
