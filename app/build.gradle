@@ -58,6 +58,8 @@ java {
 
 dependencies {
 
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
 
     implementation "io.springfox:springfox-boot-starter:${springFoxStarterVersion}"
@@ -179,8 +181,26 @@ jacocoTestCoverageVerification {
         systemProperty 'spring.profiles.active', 'sql'
     }
 
+    task testWithJpaDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'jpa'
+    }
+
+    task testWithJpaFlywayDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'jpa-flyway'
+    }
+
+    task testWithPostgreSqlDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'sql-pg'
+    }
+
     check.dependsOn testWithFileDatabase
     check.dependsOn testWithFileDatabase
-    //check.dependsOn testWithSqlDatabase
+    check.dependsOn testWithJpaDatabase
+    check.dependsOn testWithJpaFlywayDatabase
+
+    String osName = System.getProperty("os.name").toLowerCase()
+    if (osName.contains("mac")) {
+        check.dependsOn testWithPostgreSqlDatabase
+    }
 }
 

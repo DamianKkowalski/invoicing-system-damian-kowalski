@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pl.futurecollars.invoicing.db.file.FileBasedDatabase;
 import pl.futurecollars.invoicing.db.file.IdService;
+import pl.futurecollars.invoicing.db.jpa.InvoiceRepository;
+import pl.futurecollars.invoicing.db.jpa.JpaDatabase;
 import pl.futurecollars.invoicing.db.memory.InMemoryDatabase;
 import pl.futurecollars.invoicing.db.sql.SqlDatabase;
 import pl.futurecollars.invoicing.utils.FileService;
@@ -59,4 +61,11 @@ public class DatabaseConfiguration {
     log.info("Używam sql database");
     return new SqlDatabase(jdbcTemplate);
   }
+
+  @Bean
+  @ConditionalOnProperty(name = "invoicing-system.database", havingValue = "jpa")
+  public Database jpaDatabase(InvoiceRepository invoiceRepository) {
+    return new JpaDatabase(invoiceRepository);
+  }
+
 }
