@@ -30,12 +30,18 @@ class InvoiceControllerStepwiseTest extends Specification {
     @Autowired
     private JsonService jsonService
 
-    private Invoice originalInvoice = TestHelpers.invoice(1)
+    private final Invoice originalInvoice = TestHelpers.invoice(1)
 
-    private LocalDate updatedDate = LocalDate.of(2020, 02, 28)
+    private final LocalDate updatedDate = LocalDate.of(2020, 02, 28)
 
     @Shared
     private int invoiceId
+
+    void resetIds(List<Invoice> invoices) {
+        invoices.buyer.forEach(com -> com.id = 0)
+        invoices.seller.forEach(com -> com.id = 0)
+        invoices.entries.forEach(entries -> entries.forEach(ent -> ent.id = 0))
+    }
 
     def "empty array is returned when no invoices were added"() {
         when:
@@ -85,6 +91,9 @@ class InvoiceControllerStepwiseTest extends Specification {
                 .contentAsString
 
         def invoices = jsonService.toObject(response, Invoice[])
+        invoices.buyer.forEach(com -> com.id = 0)
+        invoices.seller.forEach(com -> com.id = 0)
+        invoices.entries.forEach(entries -> entries.forEach(ent -> ent.id = 0))
 
         then:
         invoices.size() == 1
@@ -104,6 +113,9 @@ class InvoiceControllerStepwiseTest extends Specification {
                 .contentAsString
 
         def invoice = jsonService.toObject(response, Invoice)
+        invoice.buyer.id = 0
+        invoice.seller.id = 0
+        invoice.entries.forEach(ent -> ent.id = 0)
 
         then:
         invoice == expectedInvoice
@@ -140,6 +152,9 @@ class InvoiceControllerStepwiseTest extends Specification {
                 .contentAsString
 
         def invoices = jsonService.toObject(response, Invoice)
+        invoices.buyer.id = 0
+        invoices.seller.id = 0
+        invoices.entries.forEach(ent -> ent.id = 0)
 
         then:
         invoices == expectedInvoice
