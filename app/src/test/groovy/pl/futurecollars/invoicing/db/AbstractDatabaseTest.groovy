@@ -7,9 +7,18 @@ import static pl.futurecollars.invoicing.TestHelpers.invoice
 abstract class AbstractDatabaseTest extends Specification {
 
     List<Invoice> invoices = (1..12).collect { invoice(it) }
-    Database database = getDatabaseInstance()
 
     abstract Database getDatabaseInstance()
+
+    Database database
+
+    def setup() {
+        database = getDatabaseInstance()
+        database.reset()
+
+        assert database.getAll().isEmpty()
+    }
+
 
     def "should save invoices returning sequential id, invoice should have id set to correct value, get by id returns saved invoice"() {
         when:

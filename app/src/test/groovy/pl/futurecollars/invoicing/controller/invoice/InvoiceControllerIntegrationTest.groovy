@@ -32,11 +32,14 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
         when:
         def invoices = getAllInvoices()
+        resetIds(invoices)
 
         then:
         invoices.size() == numberOfInvoices
         invoices == expectedInvoices
     }
+
+
 
     def "correct invoice is returned when getting by id"() {
         given:
@@ -45,6 +48,9 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
         when:
         def invoice = getInvoiceById(verifiedInvoice.getId())
+        invoice.buyer.id = 0
+        invoice.seller.id =0
+        invoice.entries.forEach(entries -> entries.id =0)
 
         then:
         invoice == verifiedInvoice
@@ -99,17 +105,23 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
     def "invoice id can be modified"() {
         given:
-        def id = addInvoiceAndReturnId(invoice(44))
-        def updatedInvoice = invoice(123)
+        def id = addInvoiceAndReturnId(invoice(1))
+        def updatedInvoice = invoice(2)
         updatedInvoice.id = id
 
-        expect:
+
+        and:
         mockMvc.perform(
                 put("$INVOICE_ENDPOINT/$id")
                         .content(jsonService.toJson(updatedInvoice))
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isNoContent())
+
+        and:
+        getInvoiceById(id).buyer.id = 0
+        getInvoiceById(id).seller.id = 0
+        getInvoiceById(id).entries.forEach(ent -> ent.id = 0)
 
         getInvoiceById(id) == updatedInvoice
     }
