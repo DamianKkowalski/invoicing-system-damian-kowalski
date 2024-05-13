@@ -198,7 +198,8 @@ jacocoTestCoverageVerification {
     }
 
     check.dependsOn testWithFileDatabase
-    check.dependsOn testWithFileDatabase
+    check.dependsOn testWithSQLDatabase
+    check.dependsOn testWithMemoryDatabase
     check.dependsOn testWithJpaDatabase
     check.dependsOn testWithJpaFlywayDatabase
     check.dependsOn testWithMongoDatabase
