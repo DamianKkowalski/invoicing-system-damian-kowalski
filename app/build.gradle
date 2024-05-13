@@ -22,7 +22,7 @@ buildscript {
         springFoxStarterVersion = '3.0.0'
         springFoxUiVersion = '3.0.0'
         flywayVersion = '7.6.0'
-
+        mongoVersion = '3.12.12'
     }
 }
 
@@ -104,6 +104,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.spockframework:spock-spring:${spockVersion}"
 
+    implementation "org.mongodb:mongo-java-driver:${mongoVersion}"
+
 }
 
 application {
@@ -125,12 +127,13 @@ checkstyle {
 }
 
 
-test {
+check {
     finalizedBy jacocoTestReport // report is always generated after tests run
     finalizedBy jacocoTestCoverageVerification
 }
 jacocoTestReport {
-    dependsOn test // tests are required to run before generating the report
+    executionData tasks.withType(Test)
+    dependsOn check
 }
 
 jacoco {
@@ -149,6 +152,7 @@ jacocoTestReport {
 
 
 jacocoTestCoverageVerification {
+    executionData tasks.withType(Test)
     violationRules {
         rule {
             limit {
@@ -189,17 +193,21 @@ jacocoTestCoverageVerification {
         systemProperty 'spring.profiles.active', 'jpa-flyway'
     }
 
-    task testWithPostgreSqlDatabase(type: Test) {
-        systemProperty 'spring.profiles.active', 'sql-pg'
+    task testWithMongoDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'mongo'
     }
 
     check.dependsOn testWithFileDatabase
     check.dependsOn testWithFileDatabase
     check.dependsOn testWithJpaDatabase
     check.dependsOn testWithJpaFlywayDatabase
+    check.dependsOn testWithMongoDatabase
 
     String osName = System.getProperty("os.name").toLowerCase()
     if (osName.contains("mac")) {
+        task testWithPostgreSqlDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'sql-pg'
+        }
         check.dependsOn testWithPostgreSqlDatabase
     }
 }
