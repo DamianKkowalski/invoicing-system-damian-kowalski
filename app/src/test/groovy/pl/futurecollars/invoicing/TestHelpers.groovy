@@ -45,4 +45,20 @@ class TestHelpers {
         .entries((1..id).collect({product(it)}))
         .build()
     }
+
+    // resetting is necessary because database query returns ids while we don't know ids in original invoice
+    static Invoice resetIds(Invoice invoice) {
+        invoice.getBuyer().id = 0
+        invoice.getSeller().id = 0
+        invoice.entries.forEach {
+            it.id = 0
+            it.expensionRelatedToCar?.id = 0
+        }
+        invoice
+    }
+
+    static List<Invoice> resetIds(List<Invoice> invoices) {
+        invoices.forEach { invoice -> resetIds(invoice) }
+    }
+
 }

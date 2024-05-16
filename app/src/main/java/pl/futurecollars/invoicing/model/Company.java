@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Company {
+public class Company implements WithId {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,5 @@ public class Company {
   @Builder.Default
   @ApiModelProperty(value = "Health insurance amount", required = true, example = "458.34")
   private BigDecimal healthInsurance = BigDecimal.ZERO;
-
 
 }

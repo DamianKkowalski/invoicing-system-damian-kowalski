@@ -3,18 +3,22 @@ package pl.futurecollars.invoicing.db
 import pl.futurecollars.invoicing.model.Invoice
 import spock.lang.Specification
 import static pl.futurecollars.invoicing.TestHelpers.invoice
+import static pl.futurecollars.invoicing.TestHelpers.resetIds
 
 abstract class AbstractDatabaseTest extends Specification {
 
     List<Invoice> invoices = (1..12).collect { invoice(it) }
 
-    abstract Database getDatabaseInstance()
+    abstract Database<Invoice> getDatabaseInstance()
 
-    Database database
+    Database<Invoice> database
 
     def setup() {
         database = getDatabaseInstance()
-        database.reset()
+
+        database.getAll().forEach {
+            invoice -> database.delete(invoice.getId())
+        }
 
         assert database.getAll().isEmpty()
     }
@@ -78,25 +82,21 @@ abstract class AbstractDatabaseTest extends Specification {
 
         when:
         def result = database.update(originalInvoice.id, expectedInvoice)
+
         then:
         def invoiceAfterUpdate = database.getById(originalInvoice.id).get()
-        resetIds(invoiceAfterUpdate) == expectedInvoice
-        resetIds(result.get()) == originalInvoice
+        def invoiceAfterUpdateAsString = resetIds(invoiceAfterUpdate).toString()
+        def expectedInvoiceAfterUpdateAsString = resetIds(expectedInvoice).toString()
+        invoiceAfterUpdateAsString == expectedInvoiceAfterUpdateAsString
+
+        and:
+        def invoiceBeforeUpdateAsString = resetIds(result.get()).toString()
+        def expectedInvoiceBeforeUpdateAsString = resetIds(originalInvoice).toString()
+        invoiceBeforeUpdateAsString == expectedInvoiceBeforeUpdateAsString
     }
 
     def "updating not existing invoice returns Optional.empty()"() {
         expect:
         database.update(213, invoices.get(1)) == Optional.empty()
-    }
-
-    // resetting is necessary because database query returns ids while we don't know ids in original invoice
-    Invoice resetIds(Invoice invoice) {
-        invoice.getBuyer().id = 0
-        invoice.getSeller().id = 0
-        invoice.entries.forEach {
-            it.id = 0
-            it.expensionRelatedToCar?.id = 0
-        }
-        invoice
     }
 }

@@ -6,41 +6,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import pl.futurecollars.invoicing.db.Database;
-import pl.futurecollars.invoicing.model.Invoice;
+import pl.futurecollars.invoicing.model.WithId;
 
-public class InMemoryDatabase implements Database {
+public class InMemoryDatabase<T extends WithId> implements Database<T> {
 
-  public int nexId = 1;
-
-  private final Map<Integer, Invoice> invoices = new HashMap<>();
+  private final Map<Integer, T> items = new HashMap<>();
+  private int nextId = 1;
 
   @Override
-  public int save(Invoice invoice) {
-    invoice.setId(nexId);
-    invoices.put(nexId, invoice);
-    return nexId++;
+  public int save(T item) {
+    item.setId(nextId);
+    items.put(nextId, item);
+
+    return nextId++;
   }
 
   @Override
-  public Optional<Invoice> getById(int id) {
-    return Optional.ofNullable(invoices.get(id));
+  public Optional<T> getById(int id) {
+    return Optional.ofNullable(items.get(id));
   }
 
   @Override
-  public List<Invoice> getAll() {
-    return new ArrayList<>(invoices.values());
+  public List<T> getAll() {
+    return new ArrayList<>(items.values());
   }
 
   @Override
-  public Optional<Invoice> update(int id, Invoice updatedInvoice) {
+  public Optional<T> update(int id, T updatedItem) {
+    updatedItem.setId(id);
 
-    updatedInvoice.setId(id);
-
-    return Optional.ofNullable(invoices.put(id, updatedInvoice));
+    return Optional.ofNullable(items.put(id, updatedItem));
   }
 
   @Override
-  public Optional<Invoice> delete(int id) {
-    return Optional.ofNullable(invoices.remove(id));
+  public Optional<T> delete(int id) {
+    return Optional.ofNullable(items.remove(id));
   }
 }

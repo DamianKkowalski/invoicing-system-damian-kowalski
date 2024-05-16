@@ -18,7 +18,7 @@ class FileBasedDatabaseSpec extends Specification {
     def jsonService = Mock(JsonService)
     def fileService = Mock(FileService)
     def idService = Mock(IdService)
-    def database = new FileBasedDatabase(jsonService, fileService, idService, path)
+    def database = new FileBasedDatabase<>(path, idService, fileService, jsonService, Invoice)
     def jsonLines = [
             "{\"id\":1,\"date\":\"2024-04-03\",\"buyer\":{\"taxIdentifications\":\"5213861303\",\"address\":\"ul. Bukowińska 24d/7 02-703 Warszawa, Polska\",\"name\":\"iCode Trust Sp. z o.o\"},\"seller\":{\"taxIdentifications\":\"552-168-66-00\",\"address\":\"32-005 Niepolomice, Nagietkowa 19\",\"name\":\"Piotr Kolacz Development\"},\"entries\":[{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"},{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"}]}",
             "{\"id\":2,\"date\":\"2024-04-03\",\"buyer\":{\"taxIdentifications\":\"5213861303\",\"address\":\"ul. Bukowińska 24d/7 02-703 Warszawa, Polska\",\"name\":\"iCode Trust Sp. z o.o\"},\"seller\":{\"taxIdentifications\":\"552-168-66-00\",\"address\":\"32-005 Niepolomice, Nagietkowa 19\",\"name\":\"Piotr Kolacz Development\"},\"entries\":[{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"},{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"}]}",
@@ -118,7 +118,6 @@ class FileBasedDatabaseSpec extends Specification {
 
     def "getAll should return all invoices from the file"() {
         given:
-        def database = new FileBasedDatabase(jsonService, fileService, idService, path)
         def jsonLines = [
                 "{\"id\":1,\"date\":\"2024-04-03\",\"buyer\":{\"taxIdentifications\":\"5213861303\",\"address\":\"ul. Bukowińska 24d/7 02-703 Warszawa, Polska\",\"name\":\"iCode Trust Sp. z o.o\"},\"seller\":{\"taxIdentifications\":\"552-168-66-00\",\"address\":\"32-005 Niepolomice, Nagietkowa 19\",\"name\":\"Piotr Kolacz Development\"},\"entries\":[{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"},{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"}]}",
                 "{\"id\":2,\"date\":\"2024-04-03\",\"buyer\":{\"taxIdentifications\":\"5213861303\",\"address\":\"ul. Bukowińska 24d/7 02-703 Warszawa, Polska\",\"name\":\"iCode Trust Sp. z o.o\"},\"seller\":{\"taxIdentifications\":\"552-168-66-00\",\"address\":\"32-005 Niepolomice, Nagietkowa 19\",\"name\":\"Piotr Kolacz Development\"},\"entries\":[{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"},{\"description\":\"Programming course\",\"price\":10000,\"vatValue\":2300,\"vatRate\":\"VAT_23\"}]}",
