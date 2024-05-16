@@ -9,7 +9,7 @@ import pl.futurecollars.invoicing.db.Database
 
 import javax.sql.DataSource
 
-class SqlDatabaseIntegrationTest extends AbstractDatabaseTest {
+class InvoiceSqlDatabaseIntegrationTest extends AbstractDatabaseTest {
 
     @Override
     Database getDatabaseInstance() {

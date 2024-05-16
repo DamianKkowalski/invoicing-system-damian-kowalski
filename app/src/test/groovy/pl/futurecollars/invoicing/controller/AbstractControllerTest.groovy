@@ -113,12 +113,6 @@ class AbstractControllerTest extends Specification{
         jsonService.toObject(response, TaxCalculatorResult.class)
     }
 
-     void resetIds(List<Invoice> invoices) {
-        invoices.buyer.forEach(com -> com.id = 0)
-        invoices.seller.forEach(com -> com.id = 0)
-        invoices.entries.forEach(entries -> entries.forEach(ent -> ent.id = 0))
-    }
-
     private <T> int addAndReturnId(T item, String endpoint) {
         Integer.valueOf(
                 mockMvc.perform(
