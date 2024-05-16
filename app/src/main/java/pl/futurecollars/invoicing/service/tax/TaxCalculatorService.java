@@ -1,8 +1,9 @@
-package pl.futurecollars.invoicing.service;
+package pl.futurecollars.invoicing.service.tax;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,22 +17,39 @@ import pl.futurecollars.invoicing.model.InvoiceEntry;
 @AllArgsConstructor
 public class TaxCalculatorService {
 
-  private final Database database;
+  private final Database<Invoice> database;
 
   public BigDecimal income(String taxIdentificationNumber) {
-    return database.visit(sellerPredicate(taxIdentificationNumber), InvoiceEntry::getNetPrice);
+    return visit(sellerPredicate(taxIdentificationNumber), InvoiceEntry::getNetPrice);
   }
 
   public BigDecimal costs(String taxIdentificationNumber) {
-    return database.visit(buyerPredicate(taxIdentificationNumber), this::getIncomeValueTakingIntoConsiderationPersonalCarUsage);
+    return visit(buyerPredicate(taxIdentificationNumber), this::getIncomeValueTakingIntoConsiderationPersonalCarUsage);
   }
 
-  public BigDecimal collectedVat(String taxIdentificationNumber) {
-    return database.visit(sellerPredicate(taxIdentificationNumber), InvoiceEntry::getVatValue);
+  public BigDecimal collectedVat(String taxIdentificationNumber) { // vat we collect when selling products
+    return visit(sellerPredicate(taxIdentificationNumber), InvoiceEntry::getVatValue);
   }
 
-  public BigDecimal paidVat(String taxIdentificationNumber) {
-    return database.visit(buyerPredicate(taxIdentificationNumber), this::getVatValueTakingIntoConsiderationPersonalCarUse);
+  public BigDecimal paidVat(String taxIdentificationNumber) { // vat we pay when buying products
+    return visit(buyerPredicate(taxIdentificationNumber), this::getVatValueTakingIntoConsiderationPersonalCarUsage);
+  }
+
+  private BigDecimal getVatValueTakingIntoConsiderationPersonalCarUsage(InvoiceEntry invoiceEntry) {
+    return Optional.ofNullable(invoiceEntry.getExpensionRelatedToCar())
+        .map(Car::isPersonalUse)
+        .map(personalCarUsage -> personalCarUsage ? BigDecimal.valueOf(5, 1) : BigDecimal.ONE)
+        .map(proportion -> invoiceEntry.getVatValue().multiply(proportion))
+        .map(value -> value.setScale(2, RoundingMode.FLOOR))
+        .orElse(invoiceEntry.getVatValue());
+  }
+
+  private BigDecimal getIncomeValueTakingIntoConsiderationPersonalCarUsage(InvoiceEntry invoiceEntry) {
+    return invoiceEntry.getNetPrice()
+        // calling function instead of calculating proportion again allows us to keep logic in one place
+        // and gives guarantee that unequal rounding value is calculated either in costs or vat
+        .add(invoiceEntry.getVatValue())
+        .subtract(getVatValueTakingIntoConsiderationPersonalCarUsage(invoiceEntry));
   }
 
   public BigDecimal getEarnings(String taxIdentificationNumber) {
@@ -65,26 +83,12 @@ public class TaxCalculatorService {
         .healthInsuranceToSubtract(healthInsuranceToSubtract)
         .incomeTaxMinusHealthInsurance(incomeTaxMinusHealthInsurance)
         .finalIncomeTax(incomeTaxMinusHealthInsurance.setScale(0, RoundingMode.DOWN))
+
+        // vat
         .collectedVat(collectedVat(taxIdentificationNumber))
         .paidVat(paidVat(taxIdentificationNumber))
         .vatToReturn(getVatToReturn(taxIdentificationNumber))
         .build();
-  }
-
-  private BigDecimal getVatValueTakingIntoConsiderationPersonalCarUse(InvoiceEntry invoiceEntry) {
-    return Optional.ofNullable(invoiceEntry.getExpensionRelatedToCar())
-        .map(Car::isPersonalUse)
-        .map(personalCarUsage -> personalCarUsage ? BigDecimal.valueOf(5, 1) : BigDecimal.ONE)
-        .map(proportion -> invoiceEntry.getVatValue().multiply(proportion))
-        .map(value -> value.setScale(2, RoundingMode.FLOOR))
-        .orElse(invoiceEntry.getVatValue());
-
-  }
-
-  private BigDecimal getIncomeValueTakingIntoConsiderationPersonalCarUsage(InvoiceEntry invoiceEntry) {
-    return invoiceEntry.getNetPrice()
-        .add(invoiceEntry.getVatValue())
-        .subtract(getVatValueTakingIntoConsiderationPersonalCarUse(invoiceEntry));
   }
 
   private Predicate<Invoice> sellerPredicate(String taxIdentificationNumber) {
@@ -93,6 +97,17 @@ public class TaxCalculatorService {
 
   private Predicate<Invoice> buyerPredicate(String taxIdentificationNumber) {
     return invoice -> taxIdentificationNumber.equals(invoice.getBuyer().getTaxIdentifications());
+  }
+
+  private BigDecimal visit(
+      Predicate<Invoice> invoicePredicate,
+      Function<InvoiceEntry, BigDecimal> invoiceEntryToValue
+  ) {
+    return database.getAll().stream()
+        .filter(invoicePredicate)
+        .flatMap(i -> i.getEntries().stream())
+        .map(invoiceEntryToValue)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
 }

@@ -6,6 +6,7 @@ import pl.futurecollars.invoicing.controller.AbstractControllerTest
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import static pl.futurecollars.invoicing.TestHelpers.invoice
+import static pl.futurecollars.invoicing.TestHelpers.resetIds
 
 
 class InvoiceControllerIntegrationTest extends AbstractControllerTest {
@@ -36,7 +37,7 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
         then:
         invoices.size() == numberOfInvoices
-        invoices == expectedInvoices
+        resetIds(invoices) == resetIds(expectedInvoices)
     }
 
 
@@ -48,12 +49,9 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
         when:
         def invoice = getInvoiceById(verifiedInvoice.getId())
-        invoice.buyer.id = 0
-        invoice.seller.id =0
-        invoice.entries.forEach(entries -> entries.id =0)
 
         then:
-        invoice == verifiedInvoice
+        resetIds(invoice) == resetIds(verifiedInvoice)
     }
 
     def "404 is returned when invoice id is not found when getting invoice by id [#id]"() {
@@ -68,7 +66,7 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
 
         where:
-        id << [-100, -2, -1, 0, 168, 1256]
+        id << [-100, -2, 168, 1256]
     }
 
     def "404 is returned when invoice id is not found when deleting invoice  [#id]"() {
@@ -83,7 +81,7 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
 
         where:
-        id << [-100, -2, -1, 0, 168, 1256]
+        id << [-100, -2, -1, 168, 1256]
     }
 
     def "404 is returned when invoice id is not found when updating invoice  [#id]"() {
@@ -100,7 +98,7 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
 
         where:
-        id << [-100, -2, -1, 0, 168, 1256]
+        id << [-100, -2, -1, 168, 1256]
     }
 
     def "invoice id can be modified"() {

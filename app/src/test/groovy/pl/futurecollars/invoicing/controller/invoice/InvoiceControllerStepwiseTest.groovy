@@ -1,16 +1,14 @@
 package pl.futurecollars.invoicing.controller.invoice
 
-import com.mongodb.client.MongoDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationContext
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.futurecollars.invoicing.TestHelpers
+import pl.futurecollars.invoicing.db.Database
 import pl.futurecollars.invoicing.model.Invoice
 import pl.futurecollars.invoicing.utils.JsonService
-import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -20,6 +18,7 @@ import java.time.LocalDate
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import static pl.futurecollars.invoicing.TestHelpers.resetIds
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -41,13 +40,17 @@ class InvoiceControllerStepwiseTest extends Specification {
     private int invoiceId
 
     @Autowired
-    private ApplicationContext context
+    private Database<Invoice> database
 
-    @Requires({ System.getProperty('spring.profiles.active', 'memory').contains("mongo") })
-    def "database is dropped to ensure clean state"() {
+    def "database is reset to ensure clean state"() {
         expect:
-        MongoDatabase mongoDatabase = context.getBean(MongoDatabase)
-        mongoDatabase.drop()
+        database != null
+
+        when:
+        database.reset()
+
+        then:
+        database.getAll().size() == 0
     }
 
     def "empty array is returned when no invoices were added"() {
@@ -104,7 +107,7 @@ class InvoiceControllerStepwiseTest extends Specification {
 
         then:
         invoices.size() == 1
-        invoices[0] == expectedInvoice
+        resetIds(invoices[0]) == resetIds(expectedInvoice)
     }
 
     def "invoice is returned correctly when getting by id"() {
@@ -125,7 +128,7 @@ class InvoiceControllerStepwiseTest extends Specification {
         invoice.entries.forEach(ent -> ent.id = 0)
 
         then:
-        invoice == expectedInvoice
+        resetIds(invoice) == resetIds(expectedInvoice)
     }
 
     def "invoice date can be modified"() {
@@ -158,13 +161,10 @@ class InvoiceControllerStepwiseTest extends Specification {
                 .response
                 .contentAsString
 
-        def invoices = jsonService.toObject(response, Invoice)
-        invoices.buyer.id = 0
-        invoices.seller.id = 0
-        invoices.entries.forEach(ent -> ent.id = 0)
+        def invoice = jsonService.toObject(response, Invoice)
 
         then:
-        invoices == expectedInvoice
+        resetIds(invoice) == resetIds(expectedInvoice)
     }
 
     def "invoice can be deleted"() {

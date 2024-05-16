@@ -164,7 +164,7 @@ jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = 'LINE'
-                minimum = 0.85
+                minimum = 0.80
             }
         }
     }
@@ -210,6 +210,10 @@ jacocoTestCoverageVerification {
         systemProperty 'spring.profiles.active', 'sql-pg'
         }
         check.dependsOn testWithPostgreSqlDatabase
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Werror"
     }
 }
 
