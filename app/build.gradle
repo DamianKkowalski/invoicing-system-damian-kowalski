@@ -224,3 +224,7 @@ jacocoTestCoverageVerification {
         options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Werror"
     }
 
+startScripts {
+    dependsOn bootJar
+}
+
