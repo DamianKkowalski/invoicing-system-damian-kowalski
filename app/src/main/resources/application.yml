@@ -16,3 +16,13 @@ spring:
     active: sql
   flyway:
     enabled: false
+
+security:
+  user:
+    name: damian
+    password: abc123
+
+invoicing-system:
+  allowedOrigins: http://localhost:4200
+  csrf:
+    disable: true

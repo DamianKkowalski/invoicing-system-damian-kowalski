@@ -58,6 +58,9 @@ java {
 
 dependencies {
 
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.security:spring-security-test"
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
@@ -160,7 +163,6 @@ jacocoTestCoverageVerification {
                 minimum = 0.80
             }
         }
-
         rule {
             limit {
                 counter = 'LINE'
@@ -168,9 +170,15 @@ jacocoTestCoverageVerification {
             }
         }
     }
-    startScripts {
-        dependsOn bootJar
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'pl/futurecollars/invoicing/InvoiceApplication.class',
+                    'pl/futurecollars/invoicing/config/*'])
+        }))
     }
+}
 
 
     task testWithFileDatabase(type: Test) {
@@ -215,5 +223,8 @@ jacocoTestCoverageVerification {
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Werror"
     }
+
+startScripts {
+    dependsOn bootJar
 }
 
