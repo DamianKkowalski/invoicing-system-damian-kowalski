@@ -13,7 +13,7 @@ logging:
 
 spring:
   profiles:
-    active: memory
+    active: sql
   flyway:
     enabled: false
 
