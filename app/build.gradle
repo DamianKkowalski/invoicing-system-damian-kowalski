@@ -111,12 +111,6 @@ dependencies {
 
 }
 
-application {
-    // Define the main class for the application.
-    mainClass = 'pl.futurecollars.invoicing.App'
-}
-
-
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
@@ -223,8 +217,3 @@ jacocoTestCoverageVerification {
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Werror"
     }
-
-startScripts {
-    dependsOn bootJar
-}
-

@@ -1,8 +1,8 @@
 ALTER TABLE public.invoice
-    ADD COLUMN buyer bigint NOT NULL;
+    ADD COLUMN buyer integer NOT NULL;
 
 ALTER TABLE public.invoice
-    ADD COLUMN seller bigint NOT NULL;
+    ADD COLUMN seller integer NOT NULL;
 
 ALTER TABLE public.invoice
     ADD CONSTRAINT buyer_fk FOREIGN KEY (buyer)
